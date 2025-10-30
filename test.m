@@ -1,6 +1,6 @@
 % Parameters
 A = 2;            % Input amplitude
-fs = 1000;          % Sampling frequency (Hz) -- adjust if needed
+fs = 1000;        % Sampling frequency (Hz) -- adjust if needed
 
 % Find all relevant .mat files
 files = dir('4_3A_*.mat');
@@ -13,13 +13,16 @@ for k = 1:length(files)
     freqs(k) = str2double(name);
 end
 
-% Sort by frequency (just in case)
+% Sort by frequency
 [freqs, sortIdx] = sort(freqs);
 files = files(sortIdx);
 
 % Preallocate results
+Ain_all = zeros(length(files),1);
+Aout_all = zeros(length(files),1);
 gains = zeros(length(files),1);
 phases = zeros(length(files),1);
+timelags = zeros(length(files),1);
 
 % Plot setup
 figure;
@@ -38,7 +41,7 @@ for k = 1:length(files)
         T = 5;
     end
 
-    % Construct time vector for this dataset
+    % Construct time vector
     N = length(xout);
     t = linspace(0, T, N)';
 
@@ -62,8 +65,16 @@ for k = 1:length(files)
     if phase > 0
         phase = phase - 360;
     end
+
+    % Compute time lag (sec)
+    timelag = phase / 360 / f;
+
+    % Store results
+    Ain_all(k) = Ain;
+    Aout_all(k) = Aout;
     gains(k) = gain;
     phases(k) = phase;
+    timelags(k) = timelag;
 
     % --- Plot output vs reference sine ---
     nexttile;
@@ -91,3 +102,14 @@ semilogx(freqs, phases, 'o-', 'LineWidth', 1.2);
 grid on;
 xlabel('Frequency (Hz)');
 ylabel('Phase (deg)');
+
+% --- Create results table ---
+results = table(freqs, Ain_all, Aout_all, timelags, gains, phases, ...
+    'VariableNames', {'Frequency_Hz', 'Input_mm', 'Output_mm', 'TimeLag_sec', 'Gain_mm_per_mm', 'Phase_deg'});
+
+disp(' ');
+disp('=== Frequency Response Data ===');
+disp(results);
+
+% Optional: Save to CSV
+writetable(results, 'frequency_response_results.csv');

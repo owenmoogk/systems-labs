@@ -1,0 +1,18 @@
+load("4_3A_0_5.mat")
+% Example parameters
+f = 0.5; % Hz (use your actual input frequency)
+A = 0.5; % amplitude
+t = linspace(0, 8, 8001)'; % example time vector, or use your own
+
+% Generate reference sine wave
+xin = A * sin(2*pi*f*t);
+
+% Plot
+figure;
+plot(t, xout, 'b', 'LineWidth', 1.2); hold on;
+plot(t, xin, 'r--', 'LineWidth', 1.2);
+grid on;
+xlabel('Time (s)');
+ylabel('Amplitude');
+legend('Measured output (xout)', 'Input sine (0.5 amplitude)');
+title('Measured output vs reference sine wave');

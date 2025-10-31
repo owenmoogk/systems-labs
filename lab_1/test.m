@@ -113,3 +113,33 @@ disp(results);
 
 % Optional: Save to CSV
 writetable(results, 'frequency_response_results.csv');
+
+zeta    = 0.3302;                
+f_n     = 10.16;                 
+omega_n = 2*pi*f_n;            
+
+% ----- Frequency vector for smooth theoretical curve -----
+f_theory = logspace(log10(min(freqs)), log10(max(freqs)), 500);
+omega_theory = 2*pi*f_theory;
+% ----- Normalized frequency u = ω / ω_n -----
+u = omega_theory / omega_n;
+
+% ----- Magnitude (dB) -----
+mag_theory = -20 * log10( sqrt( (1 - u.^2).^2 + (2*zeta*u).^2 ) );
+
+% ----- Phase (deg) using atan2 for correct quadrant -----
+real_part = omega_n^2 - omega_theory.^2;
+imag_part = -2*zeta*omega_n*omega_theory;
+phase_theory = atan2(imag_part, real_part) * 180/pi;
+
+% ----- Overlay on magnitude plot -----
+subplot(2,1,1); hold on;
+semilogx(f_theory, mag_theory, 'r-', 'LineWidth', 2, ...
+         'DisplayName', sprintf('Theory (\\zeta=%.2f, f_n=%.1f Hz)', zeta, f_n));
+legend('Measured', 'Theory', 'Location', 'southwest');
+
+% ----- Overlay on phase plot -----
+subplot(2,1,2); hold on;
+semilogx(f_theory, phase_theory, 'r-', 'LineWidth', 2, ...
+         'DisplayName', 'Theory');
+legend('Measured', 'Theory', 'Location', 'southwest');

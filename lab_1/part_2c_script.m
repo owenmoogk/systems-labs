@@ -34,8 +34,8 @@ for k = 1:length(files)
     end
 
     % --- Closed-loop theoretical response ---
-    num = Kp * Kv;
-    den = [tau, 1, Kp * Kv];
+    num = Kp * Kv / tau;
+    den = [1, 1/tau, Kp * Kv/tau];
     sys_cl = tf(num, den);
 
     % Simulate closed-loop response to the same input

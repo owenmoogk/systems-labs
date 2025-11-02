@@ -1,0 +1,32 @@
+% Load measured data
+load('4_1A.mat'); % should contain 'vout' and 'tout'
+
+% Plot measured data
+figure;
+plot(tout, vout, 'b', 'LineWidth', 1.5);
+hold on;
+
+xlabel('Time (s)');
+ylabel('Output Voltage (vout)');
+title('First Order System Response to Square Wave');
+grid on;
+
+% --- First-order system parameters ---
+Kv = 96.72;       % system gain
+tau = 0.0737;     % time constant
+Kp = 1;           % proportional gain
+
+% --- Closed-loop first-order transfer function ---
+num = Kv;
+den = [tau, 1];   % first-order
+sys_cl = tf(num, den);
+
+% --- Input: square wave of amplitude 1.5 and 1 Hz ---
+u = 1.5 * square(2*pi*1*tout+pi);  % MATLAB square() function
+
+% --- Simulate response ---
+y_theoretical = lsim(sys_cl, u, tout);
+
+% Plot theoretical response
+plot(tout, y_theoretical, 'r--', 'LineWidth', 1.5);
+legend('Measured', 'Theoretical');

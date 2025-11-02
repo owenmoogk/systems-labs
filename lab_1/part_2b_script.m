@@ -43,7 +43,7 @@ for k = 1:length(files)
     plot(tout, xout, 'b', 'LineWidth', 1.5, 'DisplayName', 'Output');
     title(sprintf('System Response (K_p = %.2f)', Kp));
     xlabel('Time (s)');
-    ylabel('Amplitude');
+    ylabel('Position');
     legend('show', 'Location', 'best');
     hold off;
 
@@ -53,5 +53,5 @@ for k = 1:length(files)
     grid on;
     title('Control Signal (u_c = K_p × (Input - Output))');
     xlabel('Time (s)');
-    ylabel('Control Signal (u_c)');
+    ylabel('Control Signal (mm)');
 end

@@ -38,12 +38,11 @@ while diff > tol
 
     diff = abs(new_zeta - zeta);
     zeta = new_zeta;
-    omega_n = omega_d / sqrt(1 - zeta^2);
-
+    new_wn = wn(idx)
 
 end
 
 fprintf("Converged results:\n");
-fprintf("wn       = %.6f\n", omega_n);
+fprintf("wn       = %.6f\n", new_wn);
 fprintf("zeta     = %.6f\n", zeta);
 fprintf("k        = %.6f N/m\n",k);

@@ -9,6 +9,10 @@
 %% 2. Calculate sG1(s) Transfer Function Coefficients
 % Denominator polynomial D(s) is the same for both:
 % D(s) = 1*s^3 + a1*s^2 + a2*s + a3
+
+a1 = 118.0953;
+a2 = 3.219e3;
+a3 = 9.7863e3;
 Denominator = [1, a1, a2, a3];
 
 % Overall constant: 1 / (m1 * m2)

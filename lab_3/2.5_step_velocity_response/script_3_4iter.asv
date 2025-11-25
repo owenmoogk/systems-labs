@@ -1,0 +1,61 @@
+clear; clc;
+
+omega_d = 5.505;
+m1 = 1.522e-4;
+m2 = 8.17e-5;
+b1 = 1/66;
+b2 = 1/660;
+
+m_total = m1 + m2;
+b_total = b1 + b2;
+p = b_total / m_total;
+
+zeta = 0.2;
+tol  = 1e-7;
+maxIter = 50;
+
+fprintf("Iter |    zeta    |    omega_n    |    k\n");
+fprintf("-------------------------------------------------\n");
+
+for iter = 1:maxIter
+
+    omega_n = omega_d / sqrt(1 - zeta^2);
+
+    k = (m1 * m2 * omega_n^2) / (m1 + m2);
+
+    a4 = 1;
+    a3 = p + 2*zeta*omega_n;
+    a2 = omega_n^2 + 2*zeta*omega_n*p;
+    a1 = p*omega_n^2;
+    a0 = 0;
+
+    den = [a4 a3 a2 a1 a0];
+
+    sys = tf(1, den);
+    [wn_list, zeta_list, poles] = damp(sys);
+    
+    wn_list   = wn_list(:);
+    zeta_list = zeta_list(:);
+    poles     = poles(:);
+    idx = find(zeta_list < 1 & imag(poles) ~= 0);
+    if numel(idx) >= 1
+        zeta_new = mean(zeta_list(idx));
+    else
+        error("No underdamped poles found.");
+    end
+
+    fprintf("%3d  |  %.6f  |  %.6f  |  %.6f\n", iter, zeta, omega_n, k);
+
+    if abs(zeta_new - zeta) < tol
+        fprintf("\nConverged after %d iterations.\n", iter);
+        zeta = zeta_new;
+        break;
+    end
+
+    zeta = zeta_new;
+end
+
+fprintf("\nFinal results:\n");
+fprintf("zeta      = %.6f\n", zeta);
+fprintf("omega_n   = %.6f rad/s\n", omega_n);
+fprintf("k         = %.6f N/m\n", k);
